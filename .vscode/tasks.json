@@ -1,0 +1,30 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Build",
+            "dependsOn": [
+                "type-check:watch",
+                "dev"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "type": "npm",
+            "script": "dev",
+            "group": "build",
+            "label": "dev",
+            "detail": "bun dev"
+        },
+        {
+            "type": "npm",
+            "script": "type-check:watch",
+            "group": "build",
+            "label": "type-check:watch",
+            "detail": "tsc --noEmit --watch"
+        }
+    ]
+}
