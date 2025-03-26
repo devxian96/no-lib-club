@@ -26,7 +26,8 @@
         "prettier": "3.5.3",
         "typescript": "~5.7.2",
         "typescript-eslint": "^8.28.0",
-        "vite": "^6.2.0"
+        "vite": "^6.2.0",
+        "vite-tsconfig-paths": "^5.1.4"
     },
     "module": "index.ts",
     "lint-staged": {
