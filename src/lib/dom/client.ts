@@ -14,22 +14,31 @@ const getNodeType = (node: VDom) => {
     return 'component' in node ? node.component : node.type;
 };
 
-const diff = (oldNode: VNode, newNode: VNode) => {
-    if (oldNode === newNode) {
-        return false;
+const update = (parent: HTMLElement, oldNode: VNode, newNode: VNode, index = 0) => {
+    if (oldNode === null || oldNode === undefined) {
+        parent.appendChild(createElement(newNode));
+        return;
     }
 
-    if (oldNode === null && newNode === null) return false;
-    if (oldNode === undefined && newNode === undefined) return false;
-    if (oldNode === null || newNode === null) return true;
-    if (oldNode === undefined || newNode === undefined) return true;
+    if (newNode === null || newNode === undefined) {
+        if (parent.childNodes[index]) {
+            parent.removeChild(parent.childNodes[index]);
+        }
+        return;
+    }
 
     if (typeof oldNode !== typeof newNode) {
-        return true;
+        const newElement = createElement(newNode);
+        parent.replaceChild(newElement, parent.childNodes[index]);
+        return;
     }
 
-    if (typeof oldNode === 'string' || typeof oldNode === 'number') {
-        return oldNode !== newNode;
+    if (typeof newNode === 'string' || typeof newNode === 'number') {
+        if (oldNode !== newNode) {
+            const newElement = document.createTextNode(String(newNode));
+            parent.replaceChild(newElement, parent.childNodes[index]);
+        }
+        return;
     }
 
     if (isVDom(oldNode) && isVDom(newNode)) {
@@ -37,15 +46,14 @@ const diff = (oldNode: VNode, newNode: VNode) => {
         const newType = getNodeType(newNode);
 
         if (oldType !== newType) {
-            return true;
+            const newElement = createElement(newNode);
+            parent.replaceChild(newElement, parent.childNodes[index]);
+            return;
         }
 
+        const element = parent.childNodes[index] as HTMLElement;
         const oldProps = oldNode.props || {};
         const newProps = newNode.props || {};
-
-        if (oldProps.key !== newProps.key) {
-            return true;
-        }
 
         const excludeProps = [
             'onClick',
@@ -58,44 +66,35 @@ const diff = (oldNode: VNode, newNode: VNode) => {
             'onKeyUp',
         ];
 
-        const oldKeys = Object.keys(oldProps).filter((key) => !excludeProps.includes(key) && key !== 'children');
-        const newKeys = Object.keys(newProps).filter((key) => !excludeProps.includes(key) && key !== 'children');
-
-        if (oldKeys.length !== newKeys.length) {
-            return true;
-        }
-
-        for (const key of oldKeys) {
-            if (oldProps[key] !== newProps[key]) {
-                return true;
+        Object.keys(oldProps).forEach((key) => {
+            if (!excludeProps.includes(key) && key !== 'children' && !(key in newProps)) {
+                element.removeAttribute(key);
             }
-        }
+        });
 
-        if (oldNode.children.length !== newNode.children.length) {
-            return true;
-        }
-
-        for (let i = 0; i < oldNode.children.length; i++) {
-            if (diff(oldNode.children[i], newNode.children[i])) {
-                return true;
+        Object.keys(newProps).forEach((key) => {
+            if (!excludeProps.includes(key) && key !== 'children' && oldProps[key] !== newProps[key]) {
+                if (key === 'className') {
+                    element.setAttribute('class', String(newProps[key]));
+                } else if (key === 'style' && typeof newProps[key] === 'object') {
+                    Object.assign(element.style, newProps[key]);
+                } else {
+                    element.setAttribute(key, String(newProps[key]));
+                }
             }
-        }
+        });
 
-        return false;
-    }
+        const oldChildren = oldNode.children;
+        const newChildren = newNode.children;
+        const maxLength = Math.max(oldChildren.length, newChildren.length);
 
-    return true;
-};
-
-const update = (parent: HTMLElement, oldNode: VNode, newNode: VNode) => {
-    const isDifferent = diff(oldNode, newNode);
-
-    if (isDifferent) {
-        const newElement = createElement(newNode);
-        if (parent.firstChild) {
-            parent.replaceChild(newElement, parent.firstChild as Node);
-        } else {
-            parent.appendChild(newElement);
+        for (let i = 0; i < maxLength; i += 1) {
+            update(
+                element,
+                i < oldChildren.length ? oldChildren[i] : null,
+                i < newChildren.length ? newChildren[i] : null,
+                i,
+            );
         }
     }
 };
@@ -119,12 +118,7 @@ export const render = (element: HTMLElement, node: Component) => {
 const rerender = () => {
     if (rootElement && rootVNode) {
         const newNode = rootVNode();
-
-        if (rootElement.firstChild) {
-            rootElement.removeChild(rootElement.firstChild);
-        }
-        rootElement.appendChild(createElement(newNode));
-
+        update(rootElement, currentVDom, newNode);
         currentVDom = newNode;
     }
 };

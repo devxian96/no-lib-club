@@ -68,7 +68,7 @@ export const beginRender = (componentFn: ComponentFunction): ComponentContext =>
     const componentId =
         typeof componentFn.__componentId === 'number'
             ? componentFn.__componentId
-            : (componentFn.__componentId = globalState.nextComponentId++);
+            : (componentFn.__componentId = globalState.nextComponentId += 1);
 
     const context: ComponentContext = {
         id: componentId,
