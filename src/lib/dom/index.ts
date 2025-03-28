@@ -1,4 +1,5 @@
 import type { VNode } from '@/lib/jsx/jsx-runtime';
+import { eventDelegation } from './utils/eventDelegation';
 
 export const createElement = (node: VNode) => {
     if (node === null || node === undefined) {
@@ -18,7 +19,7 @@ export const createElement = (node: VNode) => {
                     element.setAttribute(key, value);
                 } else if (key.startsWith('on') && typeof value === 'function') {
                     const eventName = key.substring(2).toLowerCase();
-                    element.addEventListener(eventName, value as EventListener);
+                    eventDelegation.addEventListener(element, eventName, value as EventListener);
                 } else {
                     try {
                         (element as HTMLElement & Record<string, unknown>)[key] = value;

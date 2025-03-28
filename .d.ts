@@ -89,7 +89,7 @@ declare namespace JSX {
         div?: HtmlAttributes;
 
         // allow custom tags
-        [elemName: string]: string | number | boolean | undefined;
+        [elemName: string]: string | number | boolean | undefined | HtmlAttributes | HtmlAttributes[];
     }
 
     interface HtmlAttributes {
@@ -100,7 +100,8 @@ declare namespace JSX {
         hidden?: boolean;
         tabindex?: number;
         role?: string;
-        [attr: string]: string | number | boolean | undefined;
+        children?: ElementChildren;
+        [attr: string]: string | number | boolean | undefined | ((event?: Event) => void) | ElementChildren;
     }
 
     interface AnchorAttributes extends HtmlAttributes {
@@ -158,7 +159,7 @@ declare namespace JSX {
         label?: string;
     }
 
-    interface ButtonAttributes extends HtmlAttributes {
+    interface ButtonAttributes extends ButtonEvent, HtmlAttributes {
         type?: 'submit' | 'reset' | 'button';
         disabled?: boolean;
     }
@@ -188,5 +189,9 @@ declare namespace JSX {
         type?: string;
         async?: boolean;
         defer?: boolean;
+    }
+
+    interface ButtonEvent {
+        onClick?: (event: MouseEvent) => void;
     }
 }

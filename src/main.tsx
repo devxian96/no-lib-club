@@ -1,4 +1,6 @@
 import { render } from '@/lib/dom/client';
-import { Main } from '@/pages/main';
+import { SignalDemo } from '@/pages/useSignalExample';
 
-render(document.querySelector<HTMLDivElement>('#app')!, <Main />);
+render(document.querySelector<HTMLDivElement>('#app')!, () => {
+    return <SignalDemo />;
+});
