@@ -66,13 +66,13 @@ const update = (parent: HTMLElement, oldNode: VNode, newNode: VNode, index = 0) 
             'onKeyUp',
         ];
 
-        Object.keys(oldProps).forEach((key) => {
+        for (const key of Object.keys(oldProps)) {
             if (!excludeProps.includes(key) && key !== 'children' && !(key in newProps)) {
                 element.removeAttribute(key);
             }
-        });
+        }
 
-        Object.keys(newProps).forEach((key) => {
+        for (const key of Object.keys(newProps)) {
             if (!excludeProps.includes(key) && key !== 'children' && oldProps[key] !== newProps[key]) {
                 if (key === 'className') {
                     element.setAttribute('class', String(newProps[key]));
@@ -82,7 +82,7 @@ const update = (parent: HTMLElement, oldNode: VNode, newNode: VNode, index = 0) 
                     element.setAttribute(key, String(newProps[key]));
                 }
             }
-        });
+        }
 
         const oldChildren = oldNode.children;
         const newChildren = newNode.children;

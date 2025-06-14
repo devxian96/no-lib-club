@@ -96,12 +96,19 @@ declare namespace JSX {
         id?: string;
         class?: string;
         title?: string;
-        style?: string;
+        style?: string | Record<string, string>;
         hidden?: boolean;
         tabindex?: number;
         role?: string;
         children?: ElementChildren;
-        [attr: string]: string | number | boolean | undefined | ((event?: Event) => void) | ElementChildren;
+        [attr: string]:
+            | string
+            | number
+            | boolean
+            | undefined
+            | ((event?: Event) => void)
+            | ElementChildren
+            | Record<string, string>;
     }
 
     interface AnchorAttributes extends HtmlAttributes {
