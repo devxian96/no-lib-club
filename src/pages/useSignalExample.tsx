@@ -31,11 +31,6 @@ export const Counter = ({ initialCount = 0 }: CounterProps) => {
     const handleGlobalIncrement = () => {
         setGlobalCount((prev) => prev + 1);
     };
-    console.log(
-        <Button onClick={handleIncrement}>
-            <p>지역 카운트 증가</p>
-        </Button>,
-    );
 
     return (
         <CounterContainer>

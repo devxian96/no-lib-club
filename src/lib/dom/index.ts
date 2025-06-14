@@ -14,6 +14,10 @@ export const createElement = (node: VNode) => {
         const element = document.createElement(node.component);
         if (node.props) {
             for (const [key, value] of Object.entries(node.props)) {
+                if (key === 'children') {
+                    continue;
+                }
+
                 if (typeof value === 'string') {
                     if (key === 'className') {
                         element.setAttribute('class', value);
