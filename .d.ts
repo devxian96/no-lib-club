@@ -96,7 +96,7 @@ declare namespace JSX {
         id?: string;
         class?: string;
         title?: string;
-        style?: string | Record<string, string>;
+        style?: string | Record<string, string | number>;
         hidden?: boolean;
         tabindex?: number;
         role?: string;

@@ -2,12 +2,20 @@ import { h } from '@/lib/jsx/jsx-runtime';
 import type { VNode } from '@/lib/jsx/jsx-runtime';
 
 type StylesType = TemplateStringsArray;
+type StyleInterpolation<T = Record<string, unknown>> = string | ((props: T & StyledProps) => string);
+
 interface StyledProps {
     children?: VNode | VNode[];
     [key: string]: unknown;
 }
 
-type StyledFactory = (styles: StylesType) => (props: StyledProps) => VNode;
+type StyledFactory = {
+    <T = Record<string, unknown>>(
+        styles: StylesType,
+        ...interpolations: StyleInterpolation<T>[]
+    ): (props: T & StyledProps) => VNode;
+    (styles: StylesType, ...interpolations: StyleInterpolation[]): (props: StyledProps) => VNode;
+};
 
 interface StyledInterface {
     [tag: string]: StyledFactory;
@@ -34,7 +42,7 @@ const injectStyle = (className: string, cssText: string) => {
     injectedStyles.add(styleId);
 };
 
-const parseCSSText = (cssText: string, className: string): string => {
+const parseCSSText = (cssText: string, className: string) => {
     const rules: string[] = [];
     const normalProperties: string[] = [];
 
@@ -92,20 +100,70 @@ const parseCSSText = (cssText: string, className: string): string => {
     return rules.join('\n\n');
 };
 
+const getPropsHash = (props: StyledProps) => {
+    const keys = Object.keys(props).filter((key) => key !== 'children' && key !== 'className' && key !== 'class');
+    if (keys.length === 0) return '';
+
+    const propsString = keys
+        .sort()
+        .map((key) => `${key}:${String(props[key])}`)
+        .join('|');
+    let hash = 0;
+    for (let i = 0; i < propsString.length; i++) {
+        const char = propsString.charCodeAt(i);
+        hash = (hash << 5) - hash + char;
+        hash = hash & hash;
+    }
+    return Math.abs(hash).toString(36);
+};
+
+const processCSSWithInterpolations = <T extends Record<string, unknown>>(
+    styles: StylesType,
+    interpolations: StyleInterpolation<T>[],
+    props: T & StyledProps,
+) => {
+    let result = '';
+
+    for (let i = 0; i < styles.length; i++) {
+        result += styles[i];
+
+        if (i < interpolations.length) {
+            const interpolation = interpolations[i];
+            if (typeof interpolation === 'function') {
+                const interpolatedValue = interpolation(props);
+                result += interpolatedValue || '';
+            } else {
+                result += interpolation || '';
+            }
+        }
+    }
+
+    return result;
+};
+
 export const styled: StyledInterface = new Proxy(
     {},
     {
         get(_, prop) {
             const tag = String(prop);
 
-            return (styles: StylesType) => {
-                classCounter += 1;
-                const className = `${tag}-${classCounter}`;
-                const cssText = styles[0];
+            return <T extends Record<string, unknown> = Record<string, unknown>>(
+                styles: StylesType,
+                ...interpolations: StyleInterpolation<T>[]
+            ) => {
+                const baseClassCounter = ++classCounter;
+                const baseClassName = `${tag}-${baseClassCounter}`;
 
-                injectStyle(className, cssText);
+                return (props: T & StyledProps = {} as T & StyledProps) => {
+                    const propsHash = getPropsHash(props);
+                    const className = propsHash ? `${baseClassName}-${propsHash}` : baseClassName;
 
-                return (props: StyledProps = {}) => {
+                    const styleId = `styled-${className}`;
+                    if (!injectedStyles.has(styleId)) {
+                        const cssText = processCSSWithInterpolations(styles, interpolations, props);
+                        injectStyle(className, cssText);
+                    }
+
                     const childrenArray = props.children
                         ? Array.isArray(props.children)
                             ? props.children
