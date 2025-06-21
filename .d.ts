@@ -111,7 +111,7 @@ declare namespace JSX {
             | Record<string, string>;
     }
 
-    interface AnchorAttributes extends HtmlAttributes {
+    interface AnchorAttributes extends MouseClickEvent, HtmlAttributes {
         href?: string;
         target?: string;
         rel?: string;
@@ -166,7 +166,7 @@ declare namespace JSX {
         label?: string;
     }
 
-    interface ButtonAttributes extends ButtonEvent, HtmlAttributes {
+    interface ButtonAttributes extends MouseClickEvent, HtmlAttributes {
         type?: 'submit' | 'reset' | 'button';
         disabled?: boolean;
     }
@@ -198,7 +198,7 @@ declare namespace JSX {
         defer?: boolean;
     }
 
-    interface ButtonEvent {
+    interface MouseClickEvent {
         onClick?: (event: MouseEvent) => void;
     }
 }

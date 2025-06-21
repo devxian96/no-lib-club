@@ -14,29 +14,30 @@ const getNodeType = (node: VDom) => {
     return 'component' in node ? node.component : node.type;
 };
 
-const update = (parent: HTMLElement, oldNode: VNode, newNode: VNode, index = 0) => {
+const update = (parent: HTMLElement, oldNode: VNode, newNode: VNode, index = { i: 0 }) => {
     if (oldNode === null || oldNode === undefined) {
         parent.appendChild(createElement(newNode));
         return;
     }
 
     if (newNode === null || newNode === undefined) {
-        if (parent.childNodes[index]) {
-            parent.removeChild(parent.childNodes[index]);
+        if (parent.childNodes[index.i]) {
+            parent.removeChild(parent.childNodes[index.i]);
+            index.i -= 1;
         }
         return;
     }
 
     if (typeof oldNode !== typeof newNode) {
         const newElement = createElement(newNode);
-        parent.replaceChild(newElement, parent.childNodes[index]);
+        parent.replaceChild(newElement, parent.childNodes[index.i]);
         return;
     }
 
     if (typeof newNode === 'string' || typeof newNode === 'number') {
         if (oldNode !== newNode) {
             const newElement = document.createTextNode(String(newNode));
-            parent.replaceChild(newElement, parent.childNodes[index]);
+            parent.replaceChild(newElement, parent.childNodes[index.i]);
         }
         return;
     }
@@ -47,11 +48,11 @@ const update = (parent: HTMLElement, oldNode: VNode, newNode: VNode, index = 0) 
 
         if (oldType !== newType) {
             const newElement = createElement(newNode);
-            parent.replaceChild(newElement, parent.childNodes[index]);
+            parent.replaceChild(newElement, parent.childNodes[index.i]);
             return;
         }
 
-        const element = parent.childNodes[index] as HTMLElement;
+        const element = parent.childNodes[index.i] as HTMLElement;
         const oldProps = oldNode.props || {};
         const newProps = newNode.props || {};
 
@@ -88,12 +89,12 @@ const update = (parent: HTMLElement, oldNode: VNode, newNode: VNode, index = 0) 
         const newChildren = newNode.children;
         const maxLength = Math.max(oldChildren.length, newChildren.length);
 
-        for (let i = 0; i < maxLength; i += 1) {
+        for (const index = { i: 0 }; index.i < maxLength; index.i += 1) {
             update(
                 element,
-                i < oldChildren.length ? oldChildren[i] : null,
-                i < newChildren.length ? newChildren[i] : null,
-                i,
+                index.i < oldChildren.length ? oldChildren[index.i] : null,
+                index.i < newChildren.length ? newChildren[index.i] : null,
+                index,
             );
         }
     }
@@ -115,7 +116,7 @@ export const render = (element: HTMLElement, node: Component) => {
     document.addEventListener('signal-update', rerender);
 };
 
-const rerender = () => {
+export const rerender = () => {
     if (rootElement && rootVNode) {
         const newNode = rootVNode();
         update(rootElement, currentVDom, newNode);

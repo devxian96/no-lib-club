@@ -1,6 +1,9 @@
 import { render } from '@/lib/dom/client';
-import { SignalDemo } from '@/pages/useSignalExample';
+import { Route } from './Route';
 
-render(document.querySelector<HTMLDivElement>('#app') as HTMLDivElement, () => {
-    return <SignalDemo />;
-});
+const app = document.querySelector<HTMLDivElement>('#app');
+if (!app) {
+    throw new Error('App not found');
+}
+
+render(app, () => <Route />);

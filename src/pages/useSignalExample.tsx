@@ -1,5 +1,7 @@
 import { styled } from '@/lib/styled';
+import { router } from '@/lib/router';
 import { useSignal, createSignal } from '@/lib/dom/hooks/useSignal';
+import { useEffect } from '@/lib/dom/hooks/useEffect';
 
 interface ButtonProps {
     variant?: 'primary' | 'secondary' | 'danger';
@@ -68,6 +70,9 @@ const [globalCountSignal, setGlobalCount] = createSignal(0);
 
 export const Counter = ({ initialCount = 0 }: CounterProps) => {
     const [countSignal, setCount] = useSignal(initialCount);
+    useEffect(() => {
+        console.log('countSignal changed', countSignal.value);
+    }, [countSignal.value]);
 
     const handleIncrement = () => {
         setCount((prev) => prev + 1);
@@ -126,12 +131,19 @@ export const GlobalCountDisplay = () => {
 };
 
 export const SignalDemo = () => {
+    const { navigate } = router();
+
+    const handleNavigate = (url: string) => () => {
+        navigate(url);
+    };
+
     return (
         <div className="signal-demo" style={{ maxWidth: '600px', margin: '0 auto', padding: '2rem' }}>
             <h1 style={{ textAlign: 'center', color: '#333', marginBottom: '2rem' }}>Signal 상태 관리 데모</h1>
             <Counter initialCount={5} />
             <hr style={{ margin: '2rem 0', border: 'none', borderTop: '1px solid #eee' }} />
             <GlobalCountDisplay />
+            <Button onClick={handleNavigate('/')}>메인 페이지로 이동</Button>
         </div>
     );
 };

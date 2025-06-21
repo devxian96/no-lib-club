@@ -89,9 +89,9 @@ export const endRender = () => {
             : null;
 };
 
-const getCurrentComponentContext = () => {
+export const getCurrentComponentContext = () => {
     if (!globalState.currentComponent) {
-        throw new Error('useSignal is only available in the component');
+        throw new Error('hooks is only available in the component');
     }
     return globalState.currentComponent;
 };
