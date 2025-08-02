@@ -22,7 +22,8 @@
         "paths": {
             "@/*": ["src/*"],
             "rapid": ["src/lib/index.ts"],
-            "rapid/*": ["src/lib/*"]
+            "rapid/router": ["src/lib/router/index.tsx"],
+            "rapid/styled": ["src/lib/styled/index.ts"]
         },
         /* JSX */
         "jsx": "react-jsx",
