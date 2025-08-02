@@ -34,6 +34,11 @@ const areDependenciesEqual = (prevDeps?: DependencyList, nextDeps?: DependencyLi
     return true;
 };
 
+/**
+ * Runs a side effect after rendering, optionally cleaning up and re-running when dependencies change.
+ * @param {EffectCallback} callback - The effect callback, may return a cleanup function
+ * @param {DependencyList} [dependencies] - Optional list of dependencies for the effect
+ */
 export const useEffect = (callback: EffectCallback, dependencies?: DependencyList) => {
     const context = getCurrentComponentContext();
 

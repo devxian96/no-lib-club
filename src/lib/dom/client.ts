@@ -5,15 +5,32 @@ let currentVDom: VNode | null = null;
 let rootElement: HTMLElement | null = null;
 let rootVNode: Component | null = null;
 
+/**
+ * Checks if a node is a virtual DOM (VDom) object.
+ * @param {VNode} node - The node to check
+ * @returns {node is VDom} True if the node is a VDom object
+ */
 const isVDom = (node: VNode): node is VDom => {
     const result = node !== null && node !== undefined && typeof node === 'object' && 'children' in node;
     return result;
 };
 
+/**
+ * Gets the type or component of a VDom node.
+ * @param {VDom} node - The VDom node
+ * @returns {string | Component} The type or component
+ */
 const getNodeType = (node: VDom) => {
     return 'component' in node ? node.component : node.type;
 };
 
+/**
+ * Updates the real DOM to match the new virtual DOM tree.
+ * @param {HTMLElement} parent - The parent DOM element
+ * @param {VNode} oldNode - The previous virtual node
+ * @param {VNode} newNode - The new virtual node
+ * @param {{i: number}} [index={i:0}] - The child index tracker
+ */
 const update = (parent: HTMLElement, oldNode: VNode, newNode: VNode, index = { i: 0 }) => {
     if (oldNode === null || oldNode === undefined) {
         parent.appendChild(createElement(newNode));
@@ -100,6 +117,11 @@ const update = (parent: HTMLElement, oldNode: VNode, newNode: VNode, index = { i
     }
 };
 
+/**
+ * Renders a component into a DOM element, managing the virtual DOM.
+ * @param {HTMLElement} element - The root DOM element
+ * @param {Component} node - The root component function
+ */
 export const render = (element: HTMLElement, node: Component) => {
     rootElement = element;
     rootVNode = node;
@@ -116,6 +138,9 @@ export const render = (element: HTMLElement, node: Component) => {
     document.addEventListener('signal-update', rerender);
 };
 
+/**
+ * Rerenders the root component, updating the DOM as needed.
+ */
 export const rerender = () => {
     if (rootElement && rootVNode) {
         const newNode = rootVNode();

@@ -10,6 +10,13 @@ export type Component = (props?: VDom['props']) => VNode;
 
 import { beginRender, endRender } from '@/lib/dom/hooks/useSignal';
 
+/**
+ * Hyperscript function to create VNodes or invoke components.
+ * @param {Component | string} component - Component function or tag name
+ * @param {VDom['props']} [props={}] - Props for the component or element
+ * @param {...VNode[]} children - Child nodes
+ * @returns {VNode} The resulting virtual node
+ */
 export const h = (component: Component | string, props: VDom['props'] = {}, ...children: VNode[]) => {
     if (typeof component === 'function') {
         try {

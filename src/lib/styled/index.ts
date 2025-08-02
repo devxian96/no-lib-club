@@ -25,6 +25,11 @@ let classCounter = 0;
 
 const injectedStyles = new Set<string>();
 
+/**
+ * Injects a CSS style block into the document head for a given class name.
+ * @param {string} className - The class name for the style
+ * @param {string} cssText - The CSS text to inject
+ */
 const injectStyle = (className: string, cssText: string) => {
     const styleId = `styled-${className}`;
 
@@ -42,6 +47,13 @@ const injectStyle = (className: string, cssText: string) => {
     injectedStyles.add(styleId);
 };
 
+/**
+ * Parses CSS text and returns a processed CSS string for a class.
+ * Handles normal and nested properties.
+ * @param {string} cssText - The raw CSS text
+ * @param {string} className - The class name to scope the CSS
+ * @returns {string} The processed CSS string
+ */
 const parseCSSText = (cssText: string, className: string) => {
     const rules: string[] = [];
     const normalProperties: string[] = [];

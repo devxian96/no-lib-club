@@ -1,6 +1,12 @@
 import type { VNode } from '@/lib/jsx/jsx-runtime';
 import { eventDelegation } from './utils/eventDelegation';
 
+/**
+ * Creates a DOM element or fragment from a virtual node (VNode).
+ * Handles string, number, native element, and component nodes.
+ * @param {VNode} node - The virtual node to render
+ * @returns {Node | null} The created DOM node or null
+ */
 export const createElement = (node: VNode) => {
     if (node === null || node === undefined) {
         return document.createDocumentFragment();

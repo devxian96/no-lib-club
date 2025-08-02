@@ -29,6 +29,12 @@ const globalState = {
 
 const componentSignals = new Map<string, SignalStorage<unknown>>();
 
+/**
+ * Creates a reactive signal with getter and setter.
+ * @template T Signal value type
+ * @param {T} initialValue - The initial value of the signal
+ * @returns {[Signal<T>, SignalSetter<T>]} A tuple of signal object and setter function
+ */
 export const createSignal = <T>(initialValue: T): [Signal<T>, SignalSetter<T>] => {
     let value = initialValue;
     const subscribers = new Set<(value: T) => void>();
@@ -64,6 +70,11 @@ export const createSignal = <T>(initialValue: T): [Signal<T>, SignalSetter<T>] =
     return [signal, setter];
 };
 
+/**
+ * Begins the render phase for a component, setting up its context for hooks.
+ * @param {ComponentFunction} componentFn - The component function to render
+ * @returns {ComponentContext} The context for the current component
+ */
 export const beginRender = (componentFn: ComponentFunction) => {
     const componentId =
         typeof componentFn.__componentId === 'number'
@@ -81,6 +92,9 @@ export const beginRender = (componentFn: ComponentFunction) => {
     return context;
 };
 
+/**
+ * Ends the render phase for the current component, restoring previous context.
+ */
 export const endRender = () => {
     globalState.componentStack.pop();
     globalState.currentComponent =
@@ -89,6 +103,11 @@ export const endRender = () => {
             : null;
 };
 
+/**
+ * Gets the current component context for hooks.
+ * @throws {Error} If called outside of a component render
+ * @returns {ComponentContext} The current component context
+ */
 export const getCurrentComponentContext = () => {
     if (!globalState.currentComponent) {
         throw new Error('hooks is only available in the component');
@@ -96,6 +115,12 @@ export const getCurrentComponentContext = () => {
     return globalState.currentComponent;
 };
 
+/**
+ * React-like signal hook for function components.
+ * @template T Signal value type
+ * @param {T} initialValue - The initial value of the signal
+ * @returns {[Signal<T>, SignalSetter<T>]} A tuple of signal object and setter function
+ */
 export const useSignal = <T>(initialValue: T): [Signal<T>, SignalSetter<T>] => {
     const context = getCurrentComponentContext();
 
