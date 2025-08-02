@@ -12,7 +12,7 @@ interface EffectStorage {
 
 const componentEffects = new Map<string, EffectStorage>();
 
-const areDependenciesEqual = (prevDeps?: DependencyList, nextDeps?: DependencyList): boolean => {
+const areDependenciesEqual = (prevDeps?: DependencyList, nextDeps?: DependencyList) => {
     if (prevDeps === undefined && nextDeps === undefined) {
         return false;
     }
@@ -34,7 +34,7 @@ const areDependenciesEqual = (prevDeps?: DependencyList, nextDeps?: DependencyLi
     return true;
 };
 
-export const useEffect = (callback: EffectCallback, dependencies?: DependencyList): void => {
+export const useEffect = (callback: EffectCallback, dependencies?: DependencyList) => {
     const context = getCurrentComponentContext();
 
     context.hookIndex += 1;
@@ -61,28 +61,4 @@ export const useEffect = (callback: EffectCallback, dependencies?: DependencyLis
 
         componentEffects.set(effectKey, effectStorage);
     }
-};
-
-export const cleanupComponentEffects = (componentId: number): void => {
-    const effectsToCleanup: string[] = [];
-
-    for (const [key, effect] of componentEffects.entries()) {
-        if (key.startsWith(`component_${componentId}_effect_`)) {
-            if (effect.cleanup) {
-                effect.cleanup();
-            }
-            effectsToCleanup.push(key);
-        }
-    }
-
-    effectsToCleanup.forEach((key) => componentEffects.delete(key));
-};
-
-export const getEffectState = () => {
-    return Array.from(componentEffects.entries()).map(([key, effect]) => ({
-        key,
-        hasCleanup: !!effect.cleanup,
-        dependencyCount: effect.dependencies?.length ?? 'no-deps',
-        hasRun: effect.hasRun,
-    }));
 };

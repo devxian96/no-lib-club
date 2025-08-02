@@ -10,7 +10,7 @@ class EventDelegation {
         this.attachedEvents = new Set();
     }
 
-    static getInstance(): EventDelegation {
+    static getInstance() {
         if (!EventDelegation.instance) {
             EventDelegation.instance = new EventDelegation();
         }

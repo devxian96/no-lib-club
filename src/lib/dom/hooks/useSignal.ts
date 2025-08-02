@@ -1,8 +1,8 @@
 import type { Component } from '@/lib/jsx/jsx-runtime';
 
 type SubscribeCallback<T> = (value: T) => void;
-export type SignalSetter<T> = (value: T | ((prev: T) => T)) => void;
-export type Signal<T> = {
+type SignalSetter<T> = (value: T | ((prev: T) => T)) => void;
+type Signal<T> = {
     value: T;
     subscribe: (callback: SubscribeCallback<T>) => () => void;
 };
@@ -64,7 +64,7 @@ export const createSignal = <T>(initialValue: T): [Signal<T>, SignalSetter<T>] =
     return [signal, setter];
 };
 
-export const beginRender = (componentFn: ComponentFunction): ComponentContext => {
+export const beginRender = (componentFn: ComponentFunction) => {
     const componentId =
         typeof componentFn.__componentId === 'number'
             ? componentFn.__componentId

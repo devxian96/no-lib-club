@@ -68,7 +68,7 @@ interface CounterProps {
 
 const [globalCountSignal, setGlobalCount] = createSignal(0);
 
-export const Counter = ({ initialCount = 0 }: CounterProps) => {
+const Counter = ({ initialCount = 0 }: CounterProps) => {
     const [countSignal, setCount] = useSignal(initialCount);
     useEffect(() => {
         console.log('countSignal changed', countSignal.value);
@@ -119,7 +119,7 @@ export const Counter = ({ initialCount = 0 }: CounterProps) => {
     );
 };
 
-export const GlobalCountDisplay = () => {
+const GlobalCountDisplay = () => {
     return (
         <div className="global-display" style={{ textAlign: 'center', padding: '1rem' }}>
             <h3 style={{ color: '#333' }}>다른 컴포넌트에서 전역 카운터: {globalCountSignal.value}</h3>
@@ -127,6 +127,32 @@ export const GlobalCountDisplay = () => {
                 Counter 컴포넌트에서 "전역 카운트 증가" 버튼을 클릭하면 이 값도 변경됩니다.
             </p>
         </div>
+    );
+};
+
+const ColorButton = styled.button<{ color: string }>`
+    background-color: ${(props) => props.color};
+    color: #fff;
+    border: none;
+    padding: 0.5em 1em;
+    border-radius: 4px;
+`;
+
+const getRandomColor = () => {
+    return '#' + Math.floor(Math.random() * 16777215).toString(16);
+};
+
+const RandomColorButton = () => {
+    const [color, setColor] = useSignal('#000000');
+
+    useEffect(() => {
+        setColor(getRandomColor());
+    }, []);
+
+    return (
+        <ColorButton color={color.value} onClick={() => setColor(getRandomColor())}>
+            Random Color
+        </ColorButton>
     );
 };
 
@@ -143,6 +169,7 @@ export const SignalDemo = () => {
             <Counter initialCount={5} />
             <hr style={{ margin: '2rem 0', border: 'none', borderTop: '1px solid #eee' }} />
             <GlobalCountDisplay />
+            <RandomColorButton />
             <Button onClick={handleNavigate('/')}>메인 페이지로 이동</Button>
         </div>
     );
