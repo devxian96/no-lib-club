@@ -1,5 +1,5 @@
-import { router } from '@/lib/router';
-import type { VNode } from '@/lib/jsx/jsx-runtime';
+import { router } from 'rapid/router';
+import type { PropsWithChildren } from 'rapid';
 
 /**
  * Props for the Link component.
@@ -7,9 +7,8 @@ import type { VNode } from '@/lib/jsx/jsx-runtime';
  * @property {string} href - The target URL to navigate to
  * @property {VNode} [children] - The link contents
  */
-interface Props {
+interface Props extends PropsWithChildren {
     href: string;
-    children?: VNode;
 }
 
 /**

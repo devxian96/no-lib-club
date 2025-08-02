@@ -1,4 +1,4 @@
-import { Link } from '@/lib/router';
+import { Link } from 'rapid/router';
 
 export const Main = () => {
     return (

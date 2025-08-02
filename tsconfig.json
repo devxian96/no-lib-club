@@ -20,7 +20,9 @@
         /* Paths */
         "baseUrl": ".",
         "paths": {
-            "@/*": ["src/*"]
+            "@/*": ["src/*"],
+            "rapid": ["src/lib/index.ts"],
+            "rapid/*": ["src/lib/*"]
         },
         /* JSX */
         "jsx": "react-jsx",

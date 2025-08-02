@@ -1,7 +1,6 @@
-import { styled } from '@/lib/styled';
-import { router } from '@/lib/router';
-import { useSignal, createSignal } from '@/lib/dom/hooks/useSignal';
-import { useEffect } from '@/lib/dom/hooks/useEffect';
+import { styled } from 'rapid/styled';
+import { router } from 'rapid/router';
+import { useSignal, createSignal, useEffect } from 'rapid';
 
 interface ButtonProps {
     variant?: 'primary' | 'secondary' | 'danger';
